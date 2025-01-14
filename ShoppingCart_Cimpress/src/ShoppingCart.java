@@ -1,54 +1,23 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Iterator;
 
 class ShoppingCart {
     private List<CartItem> items = new ArrayList<>();
-    private List<DiscountInfo> pendingDiscounts = new ArrayList<>();
-    private List<DiscountInfo> globalDiscounts = new ArrayList<>(); // New field for ALL type discounts
-
-    private static class DiscountInfo {
-        double percentage;
-        String type;
-        ProductType targetType;
-
-        DiscountInfo(double percentage, String type) {
-            this.percentage = percentage;
-            this.type = type;
-        }
-
-        DiscountInfo(double percentage, String type, ProductType targetType) {
-            this(percentage, type);
-            this.targetType = targetType;
-        }
-    }
+    private List<Coupon> coupons = new ArrayList<>();
 
     public void addItem(CartItem item) {
         // First apply any pending discounts specific to this item
         CartItem decoratedItem = applyPendingDiscounts(item);
-
-        // Then apply all global discounts
-        for (DiscountInfo discount : globalDiscounts) {
-            decoratedItem = new AllItemDiscount(decoratedItem, discount.percentage);
-        }
-
         items.add(decoratedItem);
     }
 
-    public void addDiscount(double percentage, String type) {
-        addDiscount(percentage, type, null);
-    }
-
-    public void addDiscount(double percentage, String type, ProductType targetType) {
-        if ("ALL".equals(type)) {
-            // For ALL type discounts, add to global discounts and apply to all existing
-            // items
-            globalDiscounts.add(new DiscountInfo(percentage, type));
-            applyGlobalDiscountToExistingItems(percentage);
+    public void addItem(Coupon coupon) {
+        if (coupon.type.equals("ALL")) {
+            coupons.add(coupon);
+            applyGlobalDiscountToExistingItems(coupon.percentage);
         } else {
-            pendingDiscounts.add(new DiscountInfo(percentage, type, targetType));
+            coupons.add(coupon);
         }
     }
 
@@ -60,30 +29,26 @@ class ShoppingCart {
     }
 
     private CartItem applyPendingDiscounts(CartItem item) {
-        if (!(item instanceof BaseProduct)) {
-            return item;
-        }
-
         CartItem decoratedItem = item;
-        Iterator<DiscountInfo> iterator = pendingDiscounts.iterator();
+        Iterator<Coupon> iterator = coupons.iterator();
         while (iterator.hasNext()) {
-            DiscountInfo discount = iterator.next();
-            if (discount.targetType == item.getType() || discount.type.equals("NEXT")) {
-                decoratedItem = applyDiscount(decoratedItem, discount);
+            Coupon coupon = iterator.next();
+            decoratedItem = applyDiscount(decoratedItem, coupon);
+            if (coupon.targetType == item.getType() || coupon.type.equals("NEXT")) {
                 iterator.remove(); // Safely remove the item using the iterator
             }
         }
         return decoratedItem;
     }
 
-    private CartItem applyDiscount(CartItem item, DiscountInfo discount) {
-        switch (discount.type) {
+    private CartItem applyDiscount(CartItem item, Coupon coupon) {
+        switch (coupon.type) {
             case "ALL":
-                return new AllItemDiscount(item, discount.percentage);
+                return new AllItemDiscount(item, coupon.percentage);
             case "NEXT":
-                return new NextItemDiscount(item, discount.percentage);
+                return new NextItemDiscount(item, coupon.percentage);
             case "TYPE":
-                return new TypeSpecificDiscount(item, discount.percentage, discount.targetType);
+                return new TypeSpecificDiscount(item, coupon.percentage, coupon.targetType);
             default:
                 return item;
         }
