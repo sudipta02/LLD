@@ -2,10 +2,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
 
 class ShoppingCart {
     private List<CartItem> items = new ArrayList<>();
-    private Map<Integer, List<DiscountInfo>> pendingDiscounts = new HashMap<>();
+    private List<DiscountInfo> pendingDiscounts = new ArrayList<>();
     private List<DiscountInfo> globalDiscounts = new ArrayList<>(); // New field for ALL type discounts
 
     private static class DiscountInfo {
@@ -26,7 +27,7 @@ class ShoppingCart {
 
     public void addItem(CartItem item) {
         // First apply any pending discounts specific to this item
-        CartItem decoratedItem = applyPendingDiscounts(item, items.size());
+        CartItem decoratedItem = applyPendingDiscounts(item);
 
         // Then apply all global discounts
         for (DiscountInfo discount : globalDiscounts) {
@@ -47,13 +48,7 @@ class ShoppingCart {
             globalDiscounts.add(new DiscountInfo(percentage, type));
             applyGlobalDiscountToExistingItems(percentage);
         } else {
-            int nextItemIndex = getNextProductIndex();
-            if (nextItemIndex == -1) {
-                pendingDiscounts.computeIfAbsent(items.size(), k -> new ArrayList<>())
-                        .add(new DiscountInfo(percentage, type, targetType));
-            } else {
-                applyDiscountToItem(nextItemIndex, percentage, type, targetType);
-            }
+            pendingDiscounts.add(new DiscountInfo(percentage, type, targetType));
         }
     }
 
@@ -64,35 +59,21 @@ class ShoppingCart {
         }
     }
 
-    private int getNextProductIndex() {
-        for (int i = items.size() - 1; i >= 0; i--) {
-            if (items.get(i) instanceof BaseProduct) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    private CartItem applyPendingDiscounts(CartItem item, int index) {
+    private CartItem applyPendingDiscounts(CartItem item) {
         if (!(item instanceof BaseProduct)) {
             return item;
         }
 
         CartItem decoratedItem = item;
-        List<DiscountInfo> discounts = pendingDiscounts.get(index);
-        if (discounts != null) {
-            for (DiscountInfo discount : discounts) {
+        Iterator<DiscountInfo> iterator = pendingDiscounts.iterator();
+        while (iterator.hasNext()) {
+            DiscountInfo discount = iterator.next();
+            if (discount.targetType == item.getType() || discount.type.equals("NEXT")) {
                 decoratedItem = applyDiscount(decoratedItem, discount);
+                iterator.remove(); // Safely remove the item using the iterator
             }
-            pendingDiscounts.remove(index);
         }
         return decoratedItem;
-    }
-
-    private void applyDiscountToItem(int index, double percentage, String type, ProductType targetType) {
-        CartItem item = items.get(index);
-        CartItem decoratedItem = applyDiscount(item, new DiscountInfo(percentage, type, targetType));
-        items.set(index, decoratedItem);
     }
 
     private CartItem applyDiscount(CartItem item, DiscountInfo discount) {
