@@ -16,8 +16,25 @@ class ShoppingCart {
         if (coupon.type.equals("ALL")) {
             coupons.add(coupon);
             applyGlobalDiscountToExistingItems(coupon.percentage);
-        } else {
+        } else if (coupon.type.equals("TYPE")) {
             coupons.add(coupon);
+            applyDiscountToNthItemOfType(coupon);
+        } else if (coupon.type.equals("NEXT")) {
+            coupons.add(coupon);
+        }
+    }
+
+    private void applyDiscountToNthItemOfType(Coupon coupon) {
+        int n = 0;
+        for (int i = 0; i < items.size(); i++) {
+            CartItem item = items.get(i);
+            if (item.getType() == coupon.targetType) {
+                n++;
+                if (n == coupon.nthItemIndex) {
+                    items.set(i,
+                            new TypeSpecificDiscount(item, coupon.percentage, coupon.targetType, coupon.nthItemIndex));
+                }
+            }
         }
     }
 
@@ -28,14 +45,36 @@ class ShoppingCart {
         }
     }
 
+    private CartItem checkItemEligibleForTypeSpecificDiscount(CartItem decoratedItem) {
+        int n = 0;
+        for (int i = 0; i < items.size(); i++) {
+            CartItem item = items.get(i);
+            if (item.getType().equals(decoratedItem.getType())) {
+                n++;
+            }
+        }
+        n++;
+        for (int i = 0; i < coupons.size(); i++) {
+            Coupon coupon = coupons.get(i);
+            if (coupon.targetType != null && coupon.targetType.equals(decoratedItem.getType())
+                    && coupon.nthItemIndex == n) {
+                decoratedItem = applyDiscount(decoratedItem, coupon);
+            }
+        }
+        return decoratedItem;
+    }
+
     private CartItem applyPendingDiscounts(CartItem item) {
         CartItem decoratedItem = item;
+        decoratedItem = checkItemEligibleForTypeSpecificDiscount(decoratedItem);
         Iterator<Coupon> iterator = coupons.iterator();
         while (iterator.hasNext()) {
             Coupon coupon = iterator.next();
-            decoratedItem = applyDiscount(decoratedItem, coupon);
-            if (coupon.targetType == item.getType() || coupon.type.equals("NEXT")) {
-                iterator.remove(); // Safely remove the item using the iterator
+            if (coupon.type.equals("NEXT") || coupon.type.equals("ALL")) {
+                decoratedItem = applyDiscount(decoratedItem, coupon);
+                if (coupon.type.equals("NEXT")) {
+                    iterator.remove();
+                }
             }
         }
         return decoratedItem;
@@ -48,7 +87,7 @@ class ShoppingCart {
             case "NEXT":
                 return new NextItemDiscount(item, coupon.percentage);
             case "TYPE":
-                return new TypeSpecificDiscount(item, coupon.percentage, coupon.targetType);
+                return new TypeSpecificDiscount(item, coupon.percentage, coupon.targetType, coupon.nthItemIndex);
             default:
                 return item;
         }

@@ -23,10 +23,13 @@ class Main {
         cart.addItem(new Coupon(25.0, "ALL")); // 25% off all items
         cart.addItem(new BaseProduct("T-shirt", 24.99, ProductType.CLOTHING, 1));
         cart.addItem(new Coupon(10.0, "NEXT")); // 20% off next item
-        cart.addItem(new Coupon(15.0, "TYPE", ProductType.FOOD)); // 30% off next food item
+        cart.addItem(new Coupon(15.0, "TYPE", ProductType.FOOD, 2)); // 30% off next food item
         cart.addItem(new BaseProduct("T-shirt", 24.99, ProductType.CLOTHING, 1));
         // Add more items
         cart.addItem(new BaseProduct("Potato Chips", 34.99, ProductType.FOOD, 1));
+        cart.addItem(new BaseProduct("Potato Chips", 34.99, ProductType.FOOD, 1));
+        cart.addItem(new BaseProduct("T-shirt", 24.99, ProductType.CLOTHING, 1));
+        cart.addItem(new Coupon(15.0, "TYPE", ProductType.CLOTHING, 3)); // 30% off next food item
 
         // Print cart contents and total
         cart.printCart();
