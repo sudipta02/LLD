@@ -24,7 +24,8 @@ public abstract class DiscountDecorator implements CartItem {
         return item.getQuantity();
     }
 
-    protected double applyDiscount(double price) {
-        return price * (1 - discountPercentage / 100);
+    @Override
+    public double getPrice() {
+        return item.getPrice() * (1 - discountPercentage / 100);
     }
 }

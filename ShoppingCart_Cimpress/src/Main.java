@@ -10,14 +10,14 @@ class Main {
         // // Add discounts
         // cart.addItem(new Coupon(10.0, "ALL")); // 10% off all items
         // cart.addItem(new Coupon(20.0, "NEXT")); // 20% off next item
-        // cart.addItem(new Coupon(30.0, "TYPE", ProductType.FOOD)); // 30% off next
+        // cart.addItem(new Coupon(30.0, "TYPE", ProductType.FOOD, 1)); // 30% off next
         // food item
 
         // // Add more items
         // cart.addItem(new BaseProduct("Potato Chips", 5.0, ProductType.FOOD, 2));
         // cart.addItem(new BaseProduct("T-shirt", 20.0, ProductType.CLOTHING, 2));
 
-        // --------------------USECASE - 2---------------------------------
+        // // --------------------USECASE - 2---------------------------------
         cart.addItem(new BaseProduct("Laptop", 12.99, ProductType.ELECTRONICS, 3));
         // Add discounts
         cart.addItem(new Coupon(25.0, "ALL")); // 25% off all items
