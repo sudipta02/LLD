@@ -1,10 +1,10 @@
 **Definition:**
 The Liskov Substitution Principle (LSP) is one of the SOLID principles in object-oriented design. It states that subtypes must be substitutable for their base types without altering the correctness of the program. In simpler terms, if class B is a subclass of class A, you should be able to replace A with B without affecting the functionality of your application.
 
-**Scenario: Shape Example**
+**Scenario: Shape Example**  
 Imagine you are designing a hierarchy for shapes, where you calculate the area of each shape. Let's apply the LSP principle.
 
-**Correct Implementation of LSP**
+**Correct Implementation of LSP**  
 Step 1: Define a base class Shape.
 ```java
 abstract class Shape {
@@ -154,5 +154,3 @@ public class LiskovViolationExample {
 3. Design Hierarchies Thoughtfully: Use inheritance only when it makes sense, and avoid "is-a" relationships that don't fit naturally.
 
 By designing Rectangle and Square as independent classes, we followed the Liskov Substitution Principle correctly.
-
-
