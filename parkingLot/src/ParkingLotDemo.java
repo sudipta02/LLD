@@ -11,8 +11,14 @@ public class ParkingLotDemo {
         Vehicle car = new Car("OD-33-1111");
         Vehicle bike = new Bike("OD-33-2222");
 
+        Vehicle car2 = new Car("OD-33-1112");
+        Vehicle bike2 = new Bike("OD-33-2223");
+
         parkingLot.parkVehicle(car);
         parkingLot.parkVehicle(bike);
+
+        parkingLot.parkVehicle(car2);
+        parkingLot.parkVehicle(bike2);
 
         parkingLot.displayAvailability();
 
@@ -20,5 +26,5 @@ public class ParkingLotDemo {
 
         parkingLot.displayAvailability();
     }
-    
+
 }
