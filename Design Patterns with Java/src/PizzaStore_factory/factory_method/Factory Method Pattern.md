@@ -1,1 +1,3 @@
 - The Factory Method Pattern defines an interface for creating an object, but lets subclasses decide which class to instantiate. Factory Method lets a class defer instantiation to subclasses.
+- Factory Method technique helps us adhere to the Dependency Inversion Principle which says "Depend on abstractions. Do not depend on concrete classes."
+- Dependency Inversion Principle suggests that our high-level components should not depend on our low-level components; rather, they should both depend on abstractions.
