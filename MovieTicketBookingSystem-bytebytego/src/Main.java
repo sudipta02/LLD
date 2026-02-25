@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import strategy.PricingStrategy;
+import strategy.SeatType;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -44,7 +45,7 @@ public class Main {
         // Create pricing strategies
         PricingStrategy normalRate = new strategy.NormalRate(new BigDecimal("12.00"));
         PricingStrategy premiumRate = new strategy.PremiumRate(new BigDecimal("18.00"));
-        PricingStrategy vipRate = new strategy.VIPRate(new BigDecimal("25.00"));
+        PricingStrategy vipRate = new strategy.VIPRate(new BigDecimal(25.00));
 
         // Create cinema
         Cinema cinema = new Cinema("Grand Cinema", "Downtown");
@@ -60,10 +61,13 @@ public class Main {
                 Seat seat = layout1.getSeatByPosition(i, j);
                 if (i < 2) {
                     seat.setPricingStrategy(vipRate);
+                    seat.setSeatType(SeatType.VIP);
                 } else if (i < 4) {
                     seat.setPricingStrategy(premiumRate);
+                    seat.setSeatType(SeatType.PREMIUM);
                 } else {
                     seat.setPricingStrategy(normalRate);
+                    seat.setSeatType(SeatType.NORMAL);
                 }
             }
         }
@@ -78,10 +82,13 @@ public class Main {
                 Seat seat = layout2.getSeatByPosition(i, j);
                 if (i < 1) {
                     seat.setPricingStrategy(vipRate);
+                    seat.setSeatType(SeatType.VIP);
                 } else if (i < 2) {
                     seat.setPricingStrategy(premiumRate);
+                    seat.setSeatType(SeatType.PREMIUM);
                 } else {
                     seat.setPricingStrategy(normalRate);
+                    seat.setSeatType(SeatType.NORMAL);
                 }
             }
         }
@@ -166,14 +173,6 @@ public class Main {
         // Book Normal seat (row 4)
         Seat seat4 = layout1.getSeatByPosition(4, 4); // Normal
 
-        System.out.println("Selecting seats:");
-        System.out.println("  - Seat " + seat1.getSeatNumber() + " (VIP): $" + seat1.getPricingStrategy().getPrice());
-        System.out.println("  - Seat " + seat2.getSeatNumber() + " (VIP): $" + seat2.getPricingStrategy().getPrice());
-        System.out
-                .println("  - Seat " + seat3.getSeatNumber() + " (Premium): $" + seat3.getPricingStrategy().getPrice());
-        System.out
-                .println("  - Seat " + seat4.getSeatNumber() + " (Normal): $" + seat4.getPricingStrategy().getPrice());
-
         // Book the tickets
         bookingSystem.bookTicket(screening1, seat1);
         bookingSystem.bookTicket(screening1, seat2);
@@ -197,12 +196,7 @@ public class Main {
         System.out.println("\nTickets purchased:");
 
         for (Ticket ticket : tickets) {
-            String seatType = "Normal";
-            if (ticket.getSeat().getPricingStrategy() instanceof strategy.VIPRate) {
-                seatType = "VIP";
-            } else if (ticket.getSeat().getPricingStrategy() instanceof strategy.PremiumRate) {
-                seatType = "Premium";
-            }
+            SeatType seatType = ticket.getSeat().getSeatType();
             System.out.println(
                     "  - Seat " + ticket.getSeat().getSeatNumber() + " (" + seatType + "): $" + ticket.getPrice());
             total = total.add(ticket.getPrice());
@@ -220,9 +214,5 @@ public class Main {
 
         availableSeats = bookingSystem.getScreeningManager().getAvailableSeats(screening1);
         System.out.println("Seats remaining: " + availableSeats.size() + " out of " + layout1.getAllSeats().size());
-
-        System.out.println("\n===========================================");
-        System.out.println("   DEMO COMPLETED SUCCESSFULLY!");
-        System.out.println("===========================================");
     }
 }

@@ -13,4 +13,9 @@ public class VIPRate implements PricingStrategy {
     public BigDecimal getPrice() {
         return price;
     }
+
+    @Override
+    public SeatType getSeatType() {
+        return SeatType.VIP;
+    }
 }

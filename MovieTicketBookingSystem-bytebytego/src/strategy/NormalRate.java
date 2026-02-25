@@ -14,4 +14,9 @@ public class NormalRate implements PricingStrategy {
         return price;
     }
 
+    @Override
+    public SeatType getSeatType() {
+        return SeatType.NORMAL;
+    }
+
 }

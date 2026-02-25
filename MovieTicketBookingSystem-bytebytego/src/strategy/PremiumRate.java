@@ -14,4 +14,9 @@ public class PremiumRate implements PricingStrategy {
         return price;
     }
 
+    @Override
+    public SeatType getSeatType() {
+        return SeatType.PREMIUM;
+    }
+
 }
