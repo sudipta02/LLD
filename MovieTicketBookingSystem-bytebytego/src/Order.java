@@ -1,5 +1,6 @@
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Order {
@@ -7,6 +8,7 @@ public class Order {
     private final LocalDateTime orderDate;
 
     public Order(LocalDateTime orderDate) {
+        this.tickets = new ArrayList<>();
         this.orderDate = orderDate;
     }
 

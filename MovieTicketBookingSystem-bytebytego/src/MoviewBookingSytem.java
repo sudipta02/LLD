@@ -30,4 +30,8 @@ public class MoviewBookingSytem {
         Ticket ticket = new Ticket(screening, seat, price);
         screeningManager.addTicket(screening, ticket);
     }
+
+    public ScreeningManager getScreeningManager() {
+        return screeningManager;
+    }
 }
