@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 public class NormalRate implements PricingStrategy {
     private final BigDecimal price;
 
-    public NormalRate(BigDecimal price) {
-        this.price = price;
+    public NormalRate() {
+        this.price = BigDecimal.valueOf(100.00);
     }
 
     @Override

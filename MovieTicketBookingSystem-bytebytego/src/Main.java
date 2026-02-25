@@ -2,8 +2,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
-import strategy.PricingStrategy;
 import strategy.SeatType;
 
 public class Main {
@@ -28,77 +26,24 @@ public class Main {
         bookingSystem.addMovie(movie2);
         bookingSystem.addMovie(movie3);
 
-        System.out.println("Added movies:");
-        System.out.println("  1. " + movie1.getTitle() + " (" + movie1.getGenre() + ", " + movie1.getDurationInMinutes()
-                + " min)");
-        System.out.println("  2. " + movie2.getTitle() + " (" + movie2.getGenre() + ", " + movie2.getDurationInMinutes()
-                + " min)");
-        System.out.println("  3. " + movie3.getTitle() + " (" + movie3.getGenre() + ", " + movie3.getDurationInMinutes()
-                + " min)");
-        System.out.println();
-
         // ===========================================
         // STEP 2: Create Cinema with Rooms and Seats
         // ===========================================
-        System.out.println("--- Setting up Cinema ---");
-
-        // Create pricing strategies
-        PricingStrategy normalRate = new strategy.NormalRate(new BigDecimal("12.00"));
-        PricingStrategy premiumRate = new strategy.PremiumRate(new BigDecimal("18.00"));
-        PricingStrategy vipRate = new strategy.VIPRate(new BigDecimal(25.00));
-
         // Create cinema
         Cinema cinema = new Cinema("Grand Cinema", "Downtown");
         bookingSystem.addCinema(cinema);
 
-        // Create layout for Room 1 (5 rows x 8 columns)
-        Layout layout1 = new Layout(5, 8);
-
-        // Set pricing strategies for seats (rows 0-1: VIP, rows 2-3: Premium, row 4:
-        // Normal)
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 8; j++) {
-                Seat seat = layout1.getSeatByPosition(i, j);
-                if (i < 2) {
-                    seat.setPricingStrategy(vipRate);
-                    seat.setSeatType(SeatType.VIP);
-                } else if (i < 4) {
-                    seat.setPricingStrategy(premiumRate);
-                    seat.setSeatType(SeatType.PREMIUM);
-                } else {
-                    seat.setPricingStrategy(normalRate);
-                    seat.setSeatType(SeatType.NORMAL);
-                }
-            }
-        }
-
-        Room room1 = new Room("Room 1", layout1);
+        // Create Room 1 (5 rows x 8 columns)
+        Room room1 = new Room("Room 1", 5, 8);
         cinema.addRoom(room1);
 
-        // Create layout for Room 2
-        Layout layout2 = new Layout(4, 6);
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 6; j++) {
-                Seat seat = layout2.getSeatByPosition(i, j);
-                if (i < 1) {
-                    seat.setPricingStrategy(vipRate);
-                    seat.setSeatType(SeatType.VIP);
-                } else if (i < 2) {
-                    seat.setPricingStrategy(premiumRate);
-                    seat.setSeatType(SeatType.PREMIUM);
-                } else {
-                    seat.setPricingStrategy(normalRate);
-                    seat.setSeatType(SeatType.NORMAL);
-                }
-            }
-        }
-
-        Room room2 = new Room("Room 2", layout2);
+        // Create Room 2 (4 rows x 6 columns)
+        Room room2 = new Room("Room 2", 4, 6);
         cinema.addRoom(room2);
 
         System.out.println("Created cinema: " + cinema.getName() + " at " + cinema.getLocation());
-        System.out.println("  - " + room1.getRoomNumber() + ": " + layout1.getAllSeats().size() + " seats");
-        System.out.println("  - " + room2.getRoomNumber() + ": " + layout2.getAllSeats().size() + " seats");
+        System.out.println("  - " + room1.getRoomNumber() + ": " + room1.getAllSeats().size() + " seats");
+        System.out.println("  - " + room2.getRoomNumber() + ": " + room2.getAllSeats().size() + " seats");
         System.out.println();
 
         // ===========================================
@@ -145,33 +90,20 @@ public class Main {
         List<Seat> availableSeats = bookingSystem.getScreeningManager().getAvailableSeats(screening1);
         System.out.println("Total available seats: " + availableSeats.size());
 
-        // Show a few available seats
-        System.out.print("Sample available seats: ");
-        int count = 0;
-        for (Seat seat : availableSeats) {
-            if (count >= 10) {
-                System.out.print("...");
-                break;
-            }
-            System.out.print(seat.getSeatNumber() + "(" + seat.getPricingStrategy().getPrice() + ") ");
-            count++;
-        }
-        System.out.println("\n");
-
         // ===========================================
         // STEP 5: Book Tickets
         // ===========================================
         System.out.println("--- Booking Tickets ---");
 
         // Book VIP seats (row 0-1)
-        Seat seat1 = layout1.getSeatByPosition(0, 0); // VIP
-        Seat seat2 = layout1.getSeatByPosition(0, 1); // VIP
+        Seat seat1 = room1.getSeatByPosition(0, 0); // VIP
+        Seat seat2 = room1.getSeatByPosition(0, 1); // VIP
 
         // Book Premium seat (row 2)
-        Seat seat3 = layout1.getSeatByPosition(2, 3); // Premium
+        Seat seat3 = room1.getSeatByPosition(2, 3); // Premium
 
         // Book Normal seat (row 4)
-        Seat seat4 = layout1.getSeatByPosition(4, 4); // Normal
+        Seat seat4 = room1.getSeatByPosition(4, 4); // Normal
 
         // Book the tickets
         bookingSystem.bookTicket(screening1, seat1);
@@ -213,6 +145,6 @@ public class Main {
         System.out.println("--- Remaining Available Seats ---");
 
         availableSeats = bookingSystem.getScreeningManager().getAvailableSeats(screening1);
-        System.out.println("Seats remaining: " + availableSeats.size() + " out of " + layout1.getAllSeats().size());
+        System.out.println("Seats remaining: " + availableSeats.size() + " out of " + room1.getAllSeats().size());
     }
 }

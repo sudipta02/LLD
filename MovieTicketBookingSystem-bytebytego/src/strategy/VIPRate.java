@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 public class VIPRate implements PricingStrategy {
     private final BigDecimal price;
 
-    public VIPRate(BigDecimal price) {
-        this.price = price;
+    public VIPRate() {
+        this.price = BigDecimal.valueOf(300.00);
     }
 
     @Override

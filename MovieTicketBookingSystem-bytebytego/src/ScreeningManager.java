@@ -29,7 +29,7 @@ public class ScreeningManager {
     }
 
     public List<Seat> getAvailableSeats(Screening screening) {
-        List<Seat> allSeats = screening.getRoom().getLayout().getAllSeats();
+        List<Seat> allSeats = screening.getRoom().getAllSeats();
         List<Ticket> bookedTickets = getTicketsForScreening(screening);
 
         List<Seat> availableSeats = new ArrayList<>(allSeats);

@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 public class PremiumRate implements PricingStrategy {
     private final BigDecimal price;
 
-    public PremiumRate(BigDecimal price) {
-        this.price = price;
+    public PremiumRate() {
+        this.price = BigDecimal.valueOf(200.00);
     }
 
     @Override
